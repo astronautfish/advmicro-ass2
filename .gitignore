@@ -1,0 +1,21 @@
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.pytxcode
+
+# Ignore code part
+#*.ipynb
+#*.py
+*.pytxcode
+*.csv
+__pycache__
+
+# Ignore vs-code stuff.
+AdvMic_Assignment-2.code-workspace
+.DS_Store
