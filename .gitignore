@@ -9,13 +9,20 @@
 *.blg
 *.pytxcode
 
-# Ignore code part
-#*.ipynb
-#*.py
+# User defined
 *.pytxcode
 *.csv
 __pycache__
-
-# Ignore vs-code stuff.
+.venv
 AdvMic_Assignment-2.code-workspace
 .DS_Store
+
+## Latex
+*.tex
+*.sty
+*.bib
+frontpage/
+illustrations/
+sections/
+tables/
+*.pdf
