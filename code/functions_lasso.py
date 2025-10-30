@@ -101,7 +101,7 @@ def get_selected_var(selected_variables, xs):
 #     return coefs, selected_variables
 
 
-def plot_lasso_path(penalty_grid, coefs, legends, vlines: dict = None):
+def plot_lasso_path(penalty_grid, coefs, legends, title="Lasso Path", vlines: dict = None):
     """
     Plots the coefficients as a function of the penalty parameter for Lasso regression.
 
@@ -120,12 +120,12 @@ def plot_lasso_path(penalty_grid, coefs, legends, vlines: dict = None):
 
     # Set log scale for the x-axis
     ax.set_xscale('log')
-    ax.set_xlim([np.min(penalty_grid), 1])
+    ax.set_xlim([np.min(penalty_grid), 2])
 
     # Add labels
     plt.xlabel(r'Penalty, $\lambda$')
     plt.ylabel(r'Estimates, $\widehat{\beta}_j(\lambda)$')
-    plt.title('Lasso Path')
+    plt.title(title)
 
     # Add legends
     lgd=ax.legend(legends,loc=(1.04,-0.3))
