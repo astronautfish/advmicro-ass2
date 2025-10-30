@@ -17,6 +17,29 @@ def standardize(X):
     
     return X_tilde
 
+def BRT(X_tilde,y):
+    (N,p) = X_tilde.shape
+    sigma = np.std(y, ddof=1)
+    c=1.1
+    alpha=0.05
+
+    penalty_BRT= (sigma*c)/np.sqrt(N)*norm.ppf(1-alpha/(2*p)) 
+
+    return penalty_BRT
+
+def BCCH(X_tilde,y):
+    (N,p) = X_tilde.shape
+    c=1.05
+    alpha=0.05
+
+    yXscale = (np.max((X_tilde.T ** 2) @ ((y-np.mean(y)) ** 2) / N)) ** 0.5
+    penalty_pilot = c / np.sqrt(N) * norm.ppf(1-alpha/(2*p)) * yXscale
+    pred = Lasso(alpha=penalty_pilot).fit(X_tilde,y).predict(X_tilde)
+    eps = y - pred 
+    epsXscale = (np.max((X_tilde.T ** 2) @ (eps ** 2) / N)) ** 0.5
+    penalty_BCCH = c*norm.ppf(1-alpha/(2*p))*epsXscale/np.sqrt(N)
+
+    return penalty_BCCH
 
 def penalty_grid_gen(start=0.01, stop=80000, num=50, **kwargs):
     penalty_grid = np.geomspace(start, stop, num=num, **kwargs)
@@ -55,27 +78,27 @@ def get_selected_var(selected_variables, xs):
 
     return xs_varname
 
-def coefs_Lasso(X, y, penalty_type: str, penalty=None, CV=5):
-    """
-    penalty should be penalty_grid if a grid is used. For CV, a five fold is used. BRT and BCCH, use normal penalty from penalty_estimate().
-    """
-    if penalty_type == "Grid":
-        coefs = []
-        for lamb in penalty:
-            fit = Lasso(alpha = lamb).fit(X,y) 
-            coefs.append(fit.coef_)
+# def coefs_Lasso(X, y, penalty_type: str, penalty=None, CV=5):
+#     """
+#     penalty should be penalty_grid if a grid is used. For CV, a five fold is used. BRT and BCCH, use normal penalty from penalty_estimate().
+#     """
+#     if penalty_type == "Grid":
+#         coefs = []
+#         for lamb in penalty:
+#             fit = Lasso(alpha = lamb).fit(X,y) 
+#             coefs.append(fit.coef_)
     
-    elif penalty_type == "CV":
-        fit_CV = LassoCV(cv=CV, alphas=penalty).fit(X,y)
-        penalty_CV = fit_CV.alpha_ 
-        coefs = fit_CV.coef_
+#     elif penalty_type == "CV":
+#         fit_CV = LassoCV(cv=CV, alphas=penalty).fit(X,y)
+#         penalty_CV = fit_CV.alpha_ 
+#         coefs = fit_CV.coef_
     
-    elif penalty_type == "BCCH" or penalty_type == "BRT":
-        fit_BCCH = Lasso(alpha=penalty).fit(X,y)
-        coefs = fit_BCCH.coef_
+#     elif penalty_type == "BCCH" or penalty_type == "BRT":
+#         fit_BCCH = Lasso(alpha=penalty).fit(X,y)
+#         coefs = fit_BCCH.coef_
 
-    selected_variables = (coefs!=0)
-    return coefs, selected_variables
+#     selected_variables = (coefs!=0)
+#     return coefs, selected_variables
 
 
 def plot_lasso_path(penalty_grid, coefs, legends, vlines: dict = None):
@@ -97,6 +120,7 @@ def plot_lasso_path(penalty_grid, coefs, legends, vlines: dict = None):
 
     # Set log scale for the x-axis
     ax.set_xscale('log')
+    ax.set_xlim([np.min(penalty_grid), 1])
 
     # Add labels
     plt.xlabel(r'Penalty, $\lambda$')
