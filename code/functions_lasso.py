@@ -7,7 +7,7 @@ from scipy.stats import norm
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import Lasso
 from sklearn.linear_model import LassoCV
-# import matplotlib.patheffects as pe
+
 
 
 def standardize(X):
@@ -20,7 +20,7 @@ def standardize(X):
 def BRT(X_tilde,y):
     (N,p) = X_tilde.shape
     sigma = np.std(y, ddof=1)
-    c=1.1
+    c=1.01
     alpha=0.05
 
     penalty_BRT= (sigma*c)/np.sqrt(N)*norm.ppf(1-alpha/(2*p)) 
@@ -29,7 +29,7 @@ def BRT(X_tilde,y):
 
 def BCCH(X_tilde,y):
     (N,p) = X_tilde.shape
-    c=1.05
+    c=1.01
     alpha=0.05
 
     yXscale = (np.max((X_tilde.T ** 2) @ ((y-np.mean(y)) ** 2) / N)) ** 0.5
@@ -78,30 +78,7 @@ def get_selected_var(selected_variables, xs):
 
     return xs_varname
 
-# def coefs_Lasso(X, y, penalty_type: str, penalty=None, CV=5):
-#     """
-#     penalty should be penalty_grid if a grid is used. For CV, a five fold is used. BRT and BCCH, use normal penalty from penalty_estimate().
-#     """
-#     if penalty_type == "Grid":
-#         coefs = []
-#         for lamb in penalty:
-#             fit = Lasso(alpha = lamb).fit(X,y) 
-#             coefs.append(fit.coef_)
-    
-#     elif penalty_type == "CV":
-#         fit_CV = LassoCV(cv=CV, alphas=penalty).fit(X,y)
-#         penalty_CV = fit_CV.alpha_ 
-#         coefs = fit_CV.coef_
-    
-#     elif penalty_type == "BCCH" or penalty_type == "BRT":
-#         fit_BCCH = Lasso(alpha=penalty).fit(X,y)
-#         coefs = fit_BCCH.coef_
-
-#     selected_variables = (coefs!=0)
-#     return coefs, selected_variables
-
-
-def plot_lasso_path(penalty_grid, coefs, legends, title="Lasso Path", vlines: dict = None):
+def plot_lasso_path(penalty_grid, coefs, legends="", title="Lasso Path", vlines: dict = None):
     """
     Plots the coefficients as a function of the penalty parameter for Lasso regression.
 
@@ -120,7 +97,7 @@ def plot_lasso_path(penalty_grid, coefs, legends, title="Lasso Path", vlines: di
 
     # Set log scale for the x-axis
     ax.set_xscale('log')
-    ax.set_xlim([np.min(penalty_grid), 2])
+    ax.set_xlim([np.min(penalty_grid), 8])
 
     # Add labels
     plt.xlabel(r'Penalty, $\lambda$')

@@ -16,6 +16,8 @@ __pycache__
 .venv
 AdvMic_Assignment-2.code-workspace
 .DS_Store
+sample_testbook.ipynb
+helper_functions.py
 
 ## Latex
 *.tex
